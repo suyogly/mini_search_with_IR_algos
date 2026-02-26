@@ -1,0 +1,10 @@
+[project]
+name = "rag-from-basics"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.131.0",
+    "uvicorn[standard]>=0.41.0",
+]
