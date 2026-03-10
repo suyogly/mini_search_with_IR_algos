@@ -1,17 +1,61 @@
 from loader import load_txts
+import re
+import string
 
-
-loader = load_txts()
-
-def lower_txt(data = loader):
+def lower_txt(data):
     lowered = []
-    for files in data:
-        files["content"] = files["content"].lower()
-        lowered.append(files)
+    for file in data:
+        file["content"] = file["content"].lower()
+        lowered.append(file)
     return lowered
 
-def remove_puntuation(data = lower_txt()):
-    
+def remove_punctuation(data):
+    cleaned = []
+    for file in data:
+        file["content"] = file["content"].translate(str.maketrans("", "", string.punctuation))
+        cleaned.append(file)
+    return cleaned
 
+def remove_numbers(data):
+    result = []
+    for file in data:
+        file["content"] = re.sub(r'\d+', '', file["content"])
+        result.append(file)
+    return result
 
+def remove_extra_whitespace(data):
+    result = []
+    for file in data:
+        file["content"] = re.sub(r'\s+', ' ', file["content"]).strip()
+        result.append(file)
+    return result
 
+def tokenize(data):
+    result = []
+    for file in data:
+        file["tokens"] = file["content"].split()
+        result.append(file)
+    return result
+
+def remove_stopwords(data):
+    stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "is", "it", "of", "with"}
+    result = []
+    for file in data:
+        file["tokens"] = [word for word in file["tokens"] if word not in stopwords]
+        result.append(file)
+    return result
+
+def normalize():
+    raw_data     = load_txts()
+    lowered      = lower_txt(raw_data)
+    no_punct     = remove_punctuation(lowered)
+    no_numbers   = remove_numbers(no_punct)
+    no_spaces    = remove_extra_whitespace(no_numbers)
+    tokenized    = tokenize(no_spaces)
+    final        = remove_stopwords(tokenized)
+    return final
+
+if __name__ == "__main__":
+    result = normalize()
+    for doc in result:
+        print(doc)
