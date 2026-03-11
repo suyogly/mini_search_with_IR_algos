@@ -9,12 +9,15 @@ def lower_txt(data):
         lowered.append(file)
     return lowered
 
-def remove_punctuation(data):
-    cleaned = []
+
+_PUNCT_RE = re.compile(r"[!\"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~]")
+
+def remove_punctuation_regex(data):
+    result = []
     for file in data:
-        file["content"] = file["content"].translate(str.maketrans("", "", string.punctuation))
-        cleaned.append(file)
-    return cleaned
+        file["content"] = _PUNCT_RE.sub("", file["content"])
+        result.append(file)
+    return result
 
 def remove_numbers(data):
     result = []
@@ -48,7 +51,7 @@ def remove_stopwords(data):
 def normalize():
     raw_data     = load_txts()
     lowered      = lower_txt(raw_data)
-    no_punct     = remove_punctuation(lowered)
+    no_punct     = remove_punctuation_regex(lowered)
     no_numbers   = remove_numbers(no_punct)
     no_spaces    = remove_extra_whitespace(no_numbers)
     tokenized    = tokenize(no_spaces)
