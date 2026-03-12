@@ -1,6 +1,5 @@
-from loader import load_txts
+from app.rag.preprocessing.loader import load_txts
 import re
-import string
 
 def lower_txt(data):
     lowered = []
@@ -11,6 +10,7 @@ def lower_txt(data):
 
 
 _PUNCT_RE = re.compile(r"[!\"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~]")
+stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "is", "it", "of", "with"}
 
 def remove_punctuation_regex(data):
     result = []
@@ -41,7 +41,6 @@ def tokenize(data):
     return result
 
 def remove_stopwords(data):
-    stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "is", "it", "of", "with"}
     result = []
     for file in data:
         file["tokens"] = [word for word in file["tokens"] if word not in stopwords]
@@ -57,6 +56,12 @@ def normalize():
     tokenized    = tokenize(no_spaces)
     final        = remove_stopwords(tokenized)
     return final
+
+def normalize_query(query: str) -> list[str]:
+    query = query.lower()
+    query = _PUNCT_RE.sub("", query)
+    tokens = query.split()
+    return [w for w in tokens if w not in stopwords]
 
 if __name__ == "__main__":
     result = normalize()
