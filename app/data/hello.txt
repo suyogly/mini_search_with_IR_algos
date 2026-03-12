@@ -1,1 +1,3 @@
-hello
+That's it. Normalize the query the same way you normalized the docs, then return any doc whose tokens overlap with the query tokens.
+
+The previous version was over-engineered with unnecessary deduplication (your docs are already unique), a seen set, and .get() defensive checks that aren't needed given your data structure.
