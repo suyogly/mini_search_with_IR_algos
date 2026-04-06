@@ -47,8 +47,18 @@ def remove_stopwords(data):
         result.append(file)
     return result
 
-def normalize():
-    raw_data     = load_txts()
+def _clone_documents(data):
+    return [
+        {
+            "doc_id": file["doc_id"],
+            "content": file["content"],
+            "metadata": dict(file.get("metadata", {})),
+        }
+        for file in data
+    ]
+
+def normalize_documents(data):
+    raw_data     = _clone_documents(data)
     lowered      = lower_txt(raw_data)
     no_punct     = remove_punctuation_regex(lowered)
     no_numbers   = remove_numbers(no_punct)
@@ -56,6 +66,9 @@ def normalize():
     tokenized    = tokenize(no_spaces)
     final        = remove_stopwords(tokenized)
     return final
+
+def normalize():
+    return normalize_documents(load_txts())
 
 def normalize_query(query: str) -> list[str]:
     query = query.lower()
